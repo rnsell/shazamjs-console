@@ -1,0 +1,24 @@
+{
+  "name": "shazamjs-console",
+  "version": "1.0.0",
+  "description": "ShazamJs console client.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./lib/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rnsell/shazamjs-console.git"
+  },
+  "author": "rnsell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rnsell/shazamjs-console/issues"
+  },
+  "homepage": "https://github.com/rnsell/shazamjs-console#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "socket.io": "^1.3.7",
+    "socket.io-client": "^1.3.7"
+  }
+}
