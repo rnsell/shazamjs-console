@@ -7,23 +7,66 @@ var colors = require('colors'),
   opt = {
     reconnect: true
   },
-  io = require('socket.io-client').connect('http://localhost:8080', opt);
+  ShazamAppView = require("./lib/shazam.app.view.js"),
+  appView = new ShazamAppView(),
+  socket = require('socket.io-client').connect('http://localhost:8080', opt),
+  altS = '\u00DF';
+
+(function (view) {
+  socket.on('connect', function () {
+    console.log('Connected!');
+
+    function emitShazam() {
+      var msg = {
+        location: "consoleApp"
+      };
+      socket.emit("Shazam!", msg);
+    }
+
+    socket.on("Transform!", function (newAppState) {
+      view.updateState(newAppState);
+      view.printView();
+    });
+
+    socket.on("Refresh!", function (newAppState) {
+      view.updateState(newAppState);
+      view.printView();
+    });
 
 
-io.on('connect', function (socket) {
-  console.log('Connected!');
+    //This controls the keyboard input.
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding('utf8');
+    stdin.on('data', function (key) {
+      // console.log(key);
+      // console.log(toUnicode(key));
+      if (key === altS) {
+        emitShazam();
+      }
+      if (key === '\u0003') {
+        process.exit();
+      } // ctrl-c
+    });
 
-  function emitShazam() {
-    var msg = {
-      location: "consoleApp"
-    };
-    socket.emit("Shazam!", msg);
+    socket.emit("Who am I?");
+
+  });
+
+  function toUnicode(theString) {
+    var unicodeString = '',
+      i,
+      theUnicode;
+    for (i = 0; i < theString.length; i += 1) {
+      theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
+      while (theUnicode.length < 4) {
+        theUnicode = '0' + theUnicode;
+      }
+      theUnicode = '\\u' + theUnicode;
+      unicodeString += theUnicode;
+    }
+    return unicodeString;
   }
-
-  function ()
-
-
-
 
   stdin.setRawMode(true);
   stdin.resume();
@@ -34,46 +77,9 @@ io.on('connect', function (socket) {
     // console.log(toUnicode(key));
     if (key === '\u00DF') {
       console.log("Shazam!".red);
-      emitShazam();
     }
     if (key === '\u0003') {
       process.exit();
     } // ctrl-c
   });
-
-
-
-});
-
-
-
-function toUnicode(theString) {
-  var unicodeString = '',
-    i,
-    theUnicode;
-  for (i = 0; i < theString.length; i += 1) {
-    theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
-    while (theUnicode.length < 4) {
-      theUnicode = '0' + theUnicode;
-    }
-    theUnicode = '\\u' + theUnicode;
-    unicodeString += theUnicode;
-  }
-  return unicodeString;
-}
-
-
-stdin.setRawMode(true);
-stdin.resume();
-stdin.setEncoding('utf8');
-
-stdin.on('data', function (key) {
-  // console.log(key);
-  // console.log(toUnicode(key));
-  if (key === '\u00DF') {
-    console.log("Shazam!".red);
-  }
-  if (key === '\u0003') {
-    process.exit();
-  } // ctrl-c
-});
+}(appView));
