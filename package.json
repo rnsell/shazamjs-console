@@ -4,7 +4,8 @@
   "description": "ShazamJs console client.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./lib/**/*.test.js"
+    "test": "mocha ./lib/**/*.test.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

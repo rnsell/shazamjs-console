@@ -10,7 +10,13 @@ var colors = require('colors'),
   ShazamAppView = require("./lib/shazam.app.view.js"),
   appView = new ShazamAppView(),
   socket = require('socket.io-client').connect('http://localhost:8080', opt),
-  altS = '\u00DF';
+  // Player = require('player'),
+  // player =  new Player("./assets/shazam.transform.mp3"),
+  platform = process.platform,
+  player = require('play-sound')({}),
+  exec = require('child_process').exec,
+  altSMac = '\u00DF',
+  altSWin = '\u001B\u0073';
 
 (function (view) {
   socket.on('connect', function () {
@@ -24,6 +30,10 @@ var colors = require('colors'),
     }
 
     socket.on("Transform!", function (newAppState) {
+        if(platform === 'darwin'){
+              exec("afplay ./assets/shazam.transform.mp3");
+        }
+
       view.updateState(newAppState);
       view.printView();
     });
@@ -39,9 +49,9 @@ var colors = require('colors'),
     stdin.resume();
     stdin.setEncoding('utf8');
     stdin.on('data', function (key) {
-      // console.log(key);
-      // console.log(toUnicode(key));
-      if (key === altS) {
+    //   console.log(key);
+    //   console.log(toUnicode(key));
+      if (key === altSMac || key === altSWin) {
         emitShazam();
       }
       if (key === '\u0003') {
